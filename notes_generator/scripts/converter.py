@@ -1,14 +1,19 @@
-"""
-Converts .mp4 files in the watched folder to .mp3 in the 'audio' directory using ffmpeg.
 
-This script takes a .mp4 video file and extracts the audio as an .mp3 file.
+"""
+Converts .mp4 files in the watched folder to .mp3 in the 'audio' directory using ffmpeg-python.
+
+This script takes a .mp4 video file and extracts the audio as an .mp3 file using the ffmpeg-python package.
 It is intended to be called from the command line or another script.
 """
 
+
 # Standard library imports
-import subprocess  # For running ffmpeg as a subprocess
 from pathlib import Path  # For platform-independent file paths
 import sys  # For command-line argument handling
+
+# Third-party import
+import ffmpeg  # ffmpeg-python package
+
 
 
 # Directory containing the .mp4 files to convert
@@ -19,25 +24,30 @@ AUDIO_DIR = Path(r"G:\Other computers\My Computer\Documents\Trainings_Audio")
 AUDIO_DIR.mkdir(exist_ok=True)
 
 
+
 def convert_to_mp3(mp4_path):
     """
-    Converts a .mp4 video file to an .mp3 audio file using ffmpeg.
+    Converts a .mp4 video file to an .mp3 audio file using ffmpeg-python.
     Args:
         mp4_path (Path): Path to the .mp4 file to convert.
     Returns:
         Path: Path to the created .mp3 file.
     """
     mp3_path = AUDIO_DIR / (mp4_path.stem + '.mp3')  # Output .mp3 path
-    # ffmpeg command to extract audio
-    cmd = [
-        'ffmpeg', '-y', '-i', str(mp4_path),  # -y to overwrite, -i for input
-        '-vn',  # No video
-        '-acodec', 'libmp3lame',  # Use mp3 encoder
-        str(mp3_path)
-    ]
-    subprocess.run(cmd, check=True)  # Run the command, raise error if fails
-    print(f"Converted {mp4_path.name} to {mp3_path.name}")
+    try:
+        (
+            ffmpeg
+            .input(str(mp4_path))
+            .output(str(mp3_path), acodec='libmp3lame', vn=None)
+            .overwrite_output()
+            .run(quiet=False)
+        )
+        print(f"Converted {mp4_path.name} to {mp3_path.name}")
+    except ffmpeg.Error as e:
+        print(f"ffmpeg error: {e}")
+        raise
     return mp3_path
+
 
 
 # Entry point for the script
