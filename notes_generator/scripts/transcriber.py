@@ -6,8 +6,6 @@ from pathlib import Path
 import sys
 import subprocess
 
-# Directory containing the .mp3 audio files to transcribe
-AUDIO_DIR = Path(r"G:\Other computers\My Computer\Documents\Trainings_Audio")
 # Directory where the markdown transcripts will be saved
 TRANSCRIPT_DIR = Path(r"G:\Other computers\My Computer\Documents\Trainings_Markdown")
 # Ensure the transcript directory exists
