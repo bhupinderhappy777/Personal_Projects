@@ -34,15 +34,8 @@ def main():
     "Treat it as a training session transcript. It should be detailed and comprehensive. "
     "Wherever necessary, add your observations about the mindset of the speaker and what can be learnt from it. "
     "Feel free to add your own insights, with your own research if necessary, but limited, staying true to the original transcript.\n\n"
-    "Respond ONLY with markdown. Here is an example, but optional format:\n\n"
-    "```markdown\n"
-    "# Session Title\n"
-    "## Key Topic\n"
-    "- Main point 1\n"
-    "- Main point 2\n"
-    "> \"Interesting quotes from the speaker.\"\n"
-    "**Speaker's mindset:** _Observation about mindset._\n"
-    "```\n"
+    "Respond ONLY with markdown."
+    "Write the document as speaking to an audience of learners, making it engaging and informative. Use language and words of speaker as much as possible."
     "Now, format the following transcript:\n"
 )
     formatted_text = call_gemini_api(format_prompt, transcript_text)
