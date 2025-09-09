@@ -6,8 +6,11 @@ Creates two files: formatted_<original>.md and summary_<original>.md
 import sys
 from pathlib import Path
 
+
 # Import Gemini API call from separate module
 from gemini_api import call_gemini_api
+# Optionally import config for consistency (not strictly needed)
+from config import TRANSCRIPTS_DIR
 
 
 def main():

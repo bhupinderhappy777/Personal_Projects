@@ -16,10 +16,9 @@ import ffmpeg  # ffmpeg-python package
 
 
 
-# Directory containing the .mp4 files to convert
-WATCHED_DIR = Path(r"C:\Users\bhupi\Videos\Zoom_Trainings")
-# Directory where the .mp3 files will be saved
-AUDIO_DIR = Path(r"G:\Other computers\My Computer\Documents\Trainings_Audio")
+
+# Import folder paths from config
+from config import WATCHED_VIDEOS_DIR, AUDIO_DIR
 # Ensure the audio output directory exists
 AUDIO_DIR.mkdir(exist_ok=True)
 

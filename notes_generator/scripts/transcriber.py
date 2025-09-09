@@ -6,10 +6,11 @@ from pathlib import Path
 import sys
 import subprocess
 
-# Directory where the markdown transcripts will be saved
-TRANSCRIPT_DIR = Path(r"G:\Other computers\My Computer\Documents\Trainings_Markdown")
+
+# Import transcript directory from config
+from config import TRANSCRIPTS_DIR
 # Ensure the transcript directory exists
-TRANSCRIPT_DIR.mkdir(exist_ok=True)
+TRANSCRIPTS_DIR.mkdir(exist_ok=True)
 
 def transcribe(mp3_path):
     """
@@ -18,10 +19,10 @@ def transcribe(mp3_path):
     """
     print ("Transcribing:", mp3_path.name)
     # Define the output markdown file path
-    md_path = TRANSCRIPT_DIR / (mp3_path.stem + '.md')
+    md_path = TRANSCRIPTS_DIR / (mp3_path.stem + '.md')
     # Build the whisper CLI command
     cmd = [
-        'whisper', str(mp3_path), '--model', 'tiny', '--output_format', 'txt', '--output_dir', str(TRANSCRIPT_DIR)
+        'whisper', str(mp3_path), '--model', 'tiny', '--output_format', 'txt', '--output_dir', str(TRANSCRIPTS_DIR)
     ]
     # Run the whisper command to generate a .txt transcript and show progress in real time
     process = subprocess.Popen(cmd, stdout=sys.stdout, stderr=sys.stderr)
@@ -29,7 +30,7 @@ def transcribe(mp3_path):
     if process.returncode != 0:
         raise subprocess.CalledProcessError(process.returncode, cmd)
     # Rename the .txt transcript to .md for markdown compatibility
-    txt_path = TRANSCRIPT_DIR / (mp3_path.stem + '.txt')
+    txt_path = TRANSCRIPTS_DIR / (mp3_path.stem + '.txt')
     if txt_path.exists():
         txt_path.rename(md_path)
     print(f"Transcribed {mp3_path.name} to {md_path.name}")

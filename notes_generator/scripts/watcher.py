@@ -12,10 +12,9 @@ import os    # (Not used, but commonly imported for file ops)
 from pathlib import Path  # For platform-independent file paths
 
 
-# Directory to watch for new .mp4 files
-WATCHED_DIR = Path(r"C:\Users\bhupi\Videos\Zoom_Trainings")
-# File to keep track of already processed files
-PROCESSED_FILE = Path(r"C:\Users\bhupi\Videos\Zoom_Trainings\processed_files.txt")
+
+# Import folder paths from config
+from config import WATCHED_VIDEOS_DIR, PROCESSED_VIDEOS_FILE
 
 
 
@@ -25,8 +24,8 @@ def get_processed_files():
     Returns:
         set: Set of file paths (as strings) that have already been processed.
     """
-    if PROCESSED_FILE.exists():
-        with open(PROCESSED_FILE, 'r') as f:
+    if PROCESSED_VIDEOS_FILE.exists():
+        with open(PROCESSED_VIDEOS_FILE, 'r') as f:
             return set(line.strip() for line in f)
     return set()
 
@@ -37,7 +36,7 @@ def save_processed_file(filename):
     Args:
         filename (str): The path of the file to mark as processed.
     """
-    with open(PROCESSED_FILE, 'a') as f:
+    with open(PROCESSED_VIDEOS_FILE, 'a') as f:
         f.write(filename + '\n')
 
 
@@ -47,11 +46,11 @@ def main():
     When a new file is found, it can trigger a conversion process
     and marks the file as processed.
     """
-    print(f"Watching {WATCHED_DIR} for new .mp4 files...")
+    print(f"Watching {WATCHED_VIDEOS_DIR} for new .mp4 files...")
     processed = get_processed_files()
     while True:
         # Iterate over all .mp4 files in the watched directory
-        for file in WATCHED_DIR.glob('*.mp4'):
+        for file in WATCHED_VIDEOS_DIR.glob('*.mp4'):
             # If the file hasn't been processed yet
             if str(file) not in processed:
                 print(f"New file detected: {file.name}")

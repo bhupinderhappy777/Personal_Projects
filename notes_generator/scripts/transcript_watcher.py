@@ -7,8 +7,9 @@ from pathlib import Path
 import subprocess
 import sys
 
-TRANSCRIPTS_DIR = Path(r"G:\Other computers\My Computer\Documents\Trainings_Markdown")
-PROCESSED_FILE = TRANSCRIPTS_DIR / "processed_editor.txt"
+
+# Import folder paths from config
+from config import TRANSCRIPTS_DIR, PROCESSED_TRANSCRIPTS_FILE
 
 
 def get_processed_files():
@@ -16,9 +17,9 @@ def get_processed_files():
     Reads the list of already processed files from the processed_editor file.
     Returns a set of file paths as strings.
     """
-    if not PROCESSED_FILE.exists():
+    if not PROCESSED_TRANSCRIPTS_FILE.exists():
         return set()
-    with open(PROCESSED_FILE, "r", encoding="utf-8") as f:
+    with open(PROCESSED_TRANSCRIPTS_FILE, "r", encoding="utf-8") as f:
         return set(line.strip() for line in f if line.strip())
 
 
@@ -26,7 +27,7 @@ def save_processed_file(filename):
     """
     Appends a processed filename to the processed_editor file.
     """
-    with open(PROCESSED_FILE, "a", encoding="utf-8") as f:
+    with open(PROCESSED_TRANSCRIPTS_FILE, "a", encoding="utf-8") as f:
         f.write(filename + "\n")
 
 
