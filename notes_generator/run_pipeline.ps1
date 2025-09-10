@@ -1,21 +1,13 @@
-# PowerShell script to activate venv and start all pipeline watcher scripts with logging
 
-# Activate the virtual environment
+# PowerShell script to activate venv and start all pipeline watcher scripts in parallel, showing output in the same terminal
+
 & "G:\Other computers\My Computer\Documents\Personal_Projects\.venv\Scripts\Activate.ps1"
 
-# Define log directory
-$logDir = "G:\Other computers\My Computer\Documents\Personal_Projects\notes_generator\logs"
-if (!(Test-Path $logDir)) {
-    New-Item -ItemType Directory -Path $logDir | Out-Null
-}
+Write-Host "Starting all pipeline watchers in parallel. Output will be available via Receive-Job."
 
-# Start watcher.py (video watcher)
-Start-Process -NoNewWindow -FilePath python -ArgumentList "scripts\watcher.py" -RedirectStandardOutput "$logDir\watcher.log" -RedirectStandardError "$logDir\watcher.err.log"
+# Start all watcher scripts in parallel jobs
+$videoJob = Start-Job -ScriptBlock { python "scripts/video_watcher.py" }
+$audioJob = Start-Job -ScriptBlock { python "scripts/audio_watcher.py" }
+$transcriptJob = Start-Job -ScriptBlock { python "scripts/transcript_watcher.py" }
 
-# Start audio_watcher.py (audio watcher)
-Start-Process -NoNewWindow -FilePath python -ArgumentList "scripts\audio_watcher.py" -RedirectStandardOutput "$logDir\audio_watcher.log" -RedirectStandardError "$logDir\audio_watcher.err.log"
-
-# Start transcript_watcher.py (transcript watcher)
-Start-Process -NoNewWindow -FilePath python -ArgumentList "scripts\transcript_watcher.py" -RedirectStandardOutput "$logDir\transcript_watcher.log" -RedirectStandardError "$logDir\transcript_watcher.err.log"
-
-Write-Host "All pipeline watchers started in background processes. Logs are in $logDir."
+Write-Host "All pipeline watchers started as background jobs. Use 'Get-Job' to see status, 'Receive-Job -Id <id>' to view output, and 'Stop-Job -Id <id>' to stop."

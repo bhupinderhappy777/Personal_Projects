@@ -11,6 +11,13 @@ from pathlib import Path
 from gemini_api import call_gemini_api
 # Import prompts from config
 from config import FORMAT_PROMPT, SUMMARY_PROMPT
+from config import TRANSCRIPTS_DIR
+
+# Define output directories for formatted and summary notes
+FORMATTED_DIR = TRANSCRIPTS_DIR / "formatted"
+SUMMARY_DIR = TRANSCRIPTS_DIR / "summary"
+FORMATTED_DIR.mkdir(parents=True, exist_ok=True)
+SUMMARY_DIR.mkdir(parents=True, exist_ok=True)
 
 
 def main():
@@ -27,7 +34,7 @@ def main():
     # Chunking: process 500 lines at a time
     chunk_size = 500
     num_chunks = (len(transcript_lines) + chunk_size - 1) // chunk_size
-    '''
+    
     formatted_chunks = []
     print(f"[editor] Step 1: Formatting transcript in {num_chunks} chunks of {chunk_size} lines each...")
     for i in range(num_chunks):
@@ -37,12 +44,12 @@ def main():
         formatted_chunk = call_gemini_api(FORMAT_PROMPT, chunk_text)
         formatted_chunks.append(formatted_chunk)
     formatted_text = '\n\n'.join(formatted_chunks)
-    formatted_path = transcript_path.parent / f"formatted_{transcript_path.name}"
+    formatted_path = FORMATTED_DIR / transcript_path.with_suffix('.md').name
     with open(formatted_path, 'w', encoding='utf-8') as f:
         f.write(formatted_text)
     print(f"[editor] Step 1 complete: Formatted notes saved to {formatted_path}")
 
-    '''
+    
     # 2. Generate a summary in chunks, then polish
     print("[editor] Step 2: Generating summary in chunks...")
     summary_chunks = []
@@ -56,7 +63,7 @@ def main():
 
     print("[editor] Step 2: Polishing concatenated summary with Gemini...")
     polished_summary = call_gemini_api(SUMMARY_PROMPT, concatenated_summary)
-    summary_path = transcript_path.parent / f"summary_{transcript_path.name}"
+    summary_path = SUMMARY_DIR / transcript_path.with_suffix('.md').name
     with open(summary_path, 'w', encoding='utf-8') as f:
         f.write(polished_summary)
     print(f"[editor] Step 2 complete: Summary notes saved to {summary_path}")

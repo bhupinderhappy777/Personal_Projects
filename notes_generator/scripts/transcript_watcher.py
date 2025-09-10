@@ -58,11 +58,10 @@ def main():
     Main loop that watches the TRANSCRIPTS_DIR for new .md files.
     When a new file is found, it triggers editor.py and marks the file as processed.
     """
-    print(f"Watching {TRANSCRIPTS_DIR} for new .md transcript files...")
     processed = get_processed_files()
     while True:
-        for file in TRANSCRIPTS_DIR.glob("*.md"):
-            if str(file) not in processed and not file.name.startswith("formatted_") and not file.name.startswith("summary_"):
+        for file in TRANSCRIPTS_DIR.glob("*.txt"):
+            if str(file) not in processed:
                 print(f"New transcript detected: {file.name}")
                 # Check if file is unlocked before processing
                 if not is_file_unlocked(file, retries=6, delay=5):

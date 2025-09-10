@@ -18,8 +18,6 @@ def transcribe(mp3_path):
     The output is saved as a .md file in the TRANSCRIPT_DIR.
     """
     print ("Transcribing:", mp3_path.name)
-    # Define the output markdown file path
-    md_path = TRANSCRIPTS_DIR / (mp3_path.stem + '.md')
     # Build the whisper CLI command
     cmd = [
         'whisper', str(mp3_path), '--model', 'tiny', '--output_format', 'txt', '--output_dir', str(TRANSCRIPTS_DIR)
@@ -29,12 +27,9 @@ def transcribe(mp3_path):
     process.communicate()
     if process.returncode != 0:
         raise subprocess.CalledProcessError(process.returncode, cmd)
-    # Rename the .txt transcript to .md for markdown compatibility
     txt_path = TRANSCRIPTS_DIR / (mp3_path.stem + '.txt')
-    if txt_path.exists():
-        txt_path.rename(md_path)
-    print(f"Transcribed {mp3_path.name} to {md_path.name}")
-    return md_path
+    print(f"Transcribed {mp3_path.name} to {txt_path.name}")
+    return txt_path
 
 if __name__ == "__main__":
     # Check if an audio file argument was provided
