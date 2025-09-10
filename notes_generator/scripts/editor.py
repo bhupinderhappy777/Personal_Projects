@@ -1,6 +1,13 @@
+
 """
-Formats a raw transcript markdown file and generates a summary using Gemini API.
-Creates two files: formatted_<original>.md and summary_<original>.md
+editor.py
+---------
+Formats a raw transcript text file and generates a summary using Gemini API.
+
+This script is called by transcript_watcher.py when a new transcript is detected.
+It uses the Gemini API to:
+    - Format the transcript into a well-structured markdown file (formatted_*.md)
+    - Generate a summary markdown file (summary_*.md) with key ideas and action items
 """
 
 import sys
@@ -21,6 +28,11 @@ SUMMARY_DIR.mkdir(parents=True, exist_ok=True)
 
 
 def main():
+    """
+    Main entry point for formatting and summarizing a transcript file.
+    Chunks the transcript for processing, calls Gemini API for formatting and summary,
+    and writes the results to output folders.
+    """
     if len(sys.argv) < 2:
         print("Usage: python editor.py <transcript_file.md>")
         sys.exit(1)

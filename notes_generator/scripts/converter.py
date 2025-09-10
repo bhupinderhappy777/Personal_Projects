@@ -1,9 +1,12 @@
 
-"""
-Converts .mp4 files in the watched folder to .mp3 in the 'audio' directory using ffmpeg-python.
 
-This script takes a .mp4 video file and extracts the audio as an .mp3 file using the ffmpeg-python package.
-It is intended to be called from the command line or another script.
+"""
+converter.py
+------------
+Converts .mp4 files in the watched folder to .mp3 audio using ffmpeg-python.
+
+This script is called by video_watcher.py when a new .mp4 file is detected.
+It uses ffmpeg-python to extract audio and save it as .mp3 in the audio folder.
 """
 
 
@@ -32,6 +35,13 @@ def convert_to_mp3(mp4_path):
     Returns:
         Path: Path to the created .mp3 file.
     """
+    """
+    Converts a .mp4 video file to an .mp3 audio file using ffmpeg-python.
+    Args:
+        mp4_path (Path): Path to the .mp4 file to convert.
+    Returns:
+        Path: Path to the created .mp3 file.
+    """
     mp3_path = AUDIO_DIR / (mp4_path.stem + '.mp3')  # Output .mp3 path
     try:
         (
@@ -51,11 +61,11 @@ def convert_to_mp3(mp4_path):
 
 # Entry point for the script
 if __name__ == "__main__":
-    # Check for required command-line argument
+    # Entry point: expects a .mp4 file path as argument
     if len(sys.argv) < 2:
         print("Usage: python converter.py <video_file.mp4>")
         sys.exit(1)
-    mp4_file = Path(sys.argv[1])  # Get the input file path
+    mp4_file = Path(sys.argv[1])
     if not mp4_file.exists():
         print(f"File not found: {mp4_file}")
         sys.exit(1)

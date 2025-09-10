@@ -1,8 +1,4 @@
-print("Loaded config.py from:", __file__)
-try:
-    print("TRANSCRIPTS_DIR in config.py:", TRANSCRIPTS_DIR)
-except Exception:
-    pass
+
 """
 Central configuration for all folder paths and settings used in the notes generator pipeline.
 Update these values to change locations globally.

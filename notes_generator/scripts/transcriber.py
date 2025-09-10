@@ -1,5 +1,11 @@
+
 """
-Transcribes .mp3 files in 'audio' to markdown using OpenAI Whisper.
+transcriber.py
+--------------
+Transcribes .mp3 files in the audio folder to text using OpenAI Whisper CLI.
+
+This script is called by audio_watcher.py when a new .mp3 file is detected.
+It uses the Whisper CLI to generate a .txt transcript in the transcripts folder.
 """
 
 from pathlib import Path
@@ -13,6 +19,10 @@ from config import TRANSCRIPTS_DIR
 TRANSCRIPTS_DIR.mkdir(exist_ok=True)
 
 def transcribe(mp3_path):
+    """
+    Transcribes a single .mp3 file to text using the Whisper CLI.
+    The output is saved as a .txt file in the transcript directory.
+    """
     """
     Transcribes a single .mp3 file to markdown using the Whisper CLI.
     The output is saved as a .md file in the TRANSCRIPT_DIR.
@@ -32,13 +42,11 @@ def transcribe(mp3_path):
     return txt_path
 
 if __name__ == "__main__":
-    # Check if an audio file argument was provided
+    # Entry point: expects a .mp3 file path as argument
     if len(sys.argv) < 2:
         print("Usage: python transcriber.py <audio_file.mp3>")
         sys.exit(1)
-    # Get the path to the provided .mp3 file
     mp3_file = Path(sys.argv[1])
-    # Check if the file exists
     if not mp3_file.exists():
         print(f"File not found: {mp3_file}")
         sys.exit(1)

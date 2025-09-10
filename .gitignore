@@ -5,3 +5,4 @@ notes_generator/scripts/list_gemini_models*
 notes_generator/scripts/temp_editor*
 __pycache__/
 notes_generator/logs/*
+notes_generator/STOP_PIPELINE
