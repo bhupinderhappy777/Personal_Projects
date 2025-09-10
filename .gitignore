@@ -1,0 +1,6 @@
+
+# Ignore pipeline/dev/temp files
+notes_generator/scripts/watcher.py
+notes_generator/scripts/list_gemini_models*
+notes_generator/scripts/temp_editor*
+__pycache__/
