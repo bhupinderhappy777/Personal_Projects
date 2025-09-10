@@ -1,0 +1,6 @@
+ffmpeg-python
+openai-whisper
+google-generativeai
+rich
+psutil
+setproctitle
