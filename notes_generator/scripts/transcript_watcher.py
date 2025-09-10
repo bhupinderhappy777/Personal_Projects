@@ -58,6 +58,7 @@ def main():
     Main loop that watches the TRANSCRIPTS_DIR for new .md files.
     When a new file is found, it triggers editor.py and marks the file as processed.
     """
+    print(f"[transcript_watcher] Watching folder: {TRANSCRIPTS_DIR}")
     processed = get_processed_files()
     while True:
         for file in TRANSCRIPTS_DIR.glob("*.txt"):
