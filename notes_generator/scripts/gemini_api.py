@@ -24,5 +24,7 @@ def call_gemini_api(prompt, text):
     genai.configure(api_key=API_KEY)
     # Use the free Gemini 1.5 Flash model (usually available for all users)
     model = genai.GenerativeModel("models/gemini-2.5-flash-lite")
+    print("Sent to Gemini API...")
     response = model.generate_content([prompt, text])
+    print("Received response from Gemini API.")
     return response.text.strip()

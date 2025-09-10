@@ -7,9 +7,30 @@ Processed files are tracked to avoid duplicate processing.
 """
 
 # Standard library imports
+
 import time  # For sleep intervals between folder checks
-import os    # (Not used, but commonly imported for file ops)
 from pathlib import Path  # For platform-independent file paths
+
+def is_file_unlocked(filepath, retries=6, delay=5):
+    """
+    Checks if a file can be opened for exclusive access. Retries if locked.
+    Args:
+        filepath (Path): Path to the file.
+        retries (int): Number of times to retry.
+        delay (int): Seconds to wait between retries.
+    Returns:
+        bool: True if file is unlocked, False otherwise.
+    """
+    for attempt in range(retries):
+        try:
+            with open(filepath, 'rb+'):
+                return True
+        except (PermissionError, OSError):
+            if attempt < retries - 1:
+                print(f"[video_watcher] File {filepath.name} is locked (attempt {attempt+1}/{retries}), retrying in {delay}s...")
+                time.sleep(delay)
+    print(f"[video_watcher] File {filepath.name} is still locked after {retries} attempts. Skipping for now.")
+    return False
 
 
 # Directory to watch for new .mp4 files
@@ -50,12 +71,13 @@ def main():
     print(f"Watching {WATCHED_DIR} for new .mp4 files...")
     processed = get_processed_files()
     while True:
-        # Iterate over all .mp4 files in the watched directory
         for file in WATCHED_DIR.glob('*.mp4'):
-            # If the file hasn't been processed yet
             if str(file) not in processed:
                 print(f"New file detected: {file.name}")
-                # Trigger the converter script to convert .mp4 to .mp3
+                # Check if file is unlocked before processing
+                if not is_file_unlocked(file, retries=6, delay=5):
+                    print(f"[video_watcher] Skipping {file.name} for now (still locked). Will check again later.")
+                    continue
                 import subprocess, sys
                 converter_path = Path(__file__).parent / 'converter.py'
                 try:

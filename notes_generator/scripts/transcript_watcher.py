@@ -2,10 +2,32 @@
 Watches the transcripts folder for new .md files and triggers editor.py to format and summarize notes using Gemini API.
 """
 
+
 import time
 from pathlib import Path
 import subprocess
 import sys
+
+def is_file_unlocked(filepath, retries=6, delay=5):
+    """
+    Checks if a file can be opened for exclusive access. Retries if locked.
+    Args:
+        filepath (Path): Path to the file.
+        retries (int): Number of times to retry.
+        delay (int): Seconds to wait between retries.
+    Returns:
+        bool: True if file is unlocked, False otherwise.
+    """
+    for attempt in range(retries):
+        try:
+            with open(filepath, 'rb+'):
+                return True
+        except (PermissionError, OSError):
+            if attempt < retries - 1:
+                print(f"[transcript_watcher] File {filepath.name} is locked (attempt {attempt+1}/{retries}), retrying in {delay}s...")
+                time.sleep(delay)
+    print(f"[transcript_watcher] File {filepath.name} is still locked after {retries} attempts. Skipping for now.")
+    return False
 
 
 # Import folder paths from config
@@ -42,6 +64,10 @@ def main():
         for file in TRANSCRIPTS_DIR.glob("*.md"):
             if str(file) not in processed and not file.name.startswith("formatted_") and not file.name.startswith("summary_"):
                 print(f"New transcript detected: {file.name}")
+                # Check if file is unlocked before processing
+                if not is_file_unlocked(file, retries=6, delay=5):
+                    print(f"[transcript_watcher] Skipping {file.name} for now (still locked). Will check again later.")
+                    continue
                 editor_path = Path(__file__).parent / "editor.py"
                 try:
                     subprocess.run(

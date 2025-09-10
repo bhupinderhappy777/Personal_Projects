@@ -3,10 +3,32 @@ Watches the Trainings_Audio folder for new .mp3 files and runs transcriber.py
 to generate markdown transcripts automatically.
 """
 
+
 import time
 from pathlib import Path
 import subprocess
 import sys
+
+def is_file_unlocked(filepath, retries=6, delay=5):
+    """
+    Checks if a file can be opened for exclusive access. Retries if locked.
+    Args:
+        filepath (Path): Path to the file.
+        retries (int): Number of times to retry.
+        delay (int): Seconds to wait between retries.
+    Returns:
+        bool: True if file is unlocked, False otherwise.
+    """
+    for attempt in range(retries):
+        try:
+            with open(filepath, 'rb+'):
+                return True
+        except (PermissionError, OSError):
+            if attempt < retries - 1:
+                print(f"[audio_watcher] File {filepath.name} is locked (attempt {attempt+1}/{retries}), retrying in {delay}s...")
+                time.sleep(delay)
+    print(f"[audio_watcher] File {filepath.name} is still locked after {retries} attempts. Skipping for now.")
+    return False
 
 
 # Import folder paths from config
@@ -40,8 +62,10 @@ def main():
         for file in AUDIO_DIR.glob("*.mp3"):
             if str(file) not in processed:
                 print(f"New audio file detected: {file.name}")
-                # Trigger the transcriber script
-            
+                # Check if file is unlocked before processing
+                if not is_file_unlocked(file, retries=6, delay=5):
+                    print(f"[audio_watcher] Skipping {file.name} for now (still locked). Will check again later.")
+                    continue
                 transcriber_path = Path(__file__).parent / "transcriber.py"
                 try:
                     subprocess.run(
