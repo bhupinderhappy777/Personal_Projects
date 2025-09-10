@@ -9,8 +9,8 @@ from pathlib import Path
 
 # Import Gemini API call from separate module
 from gemini_api import call_gemini_api
-# Optionally import config for consistency (not strictly needed)
-from config import TRANSCRIPTS_DIR
+# Import prompts from config
+from config import FORMAT_PROMPT, SUMMARY_PROMPT
 
 
 def main():
@@ -25,51 +25,14 @@ def main():
         transcript_text = f.read()
 
     # 1. Format the transcript nicely
-    format_prompt = (
-    "Format the following transcript into well-structured markdown. "
-    "Use headings, bullet points, and blockquotes where appropriate. "
-    "Do not summarize; just improve readability and structure. Do not remove any content. "
-    "You can add emphasis using bold or italics where relevant. "
-    "Correct any obvious grammar or spelling mistakes. "
-    "Treat it as a training session transcript. It should be detailed and comprehensive. "
-    "Wherever necessary, add your observations about the mindset of the speaker and what can be learnt from it. "
-    "Feel free to add your own insights, with your own research if necessary, but limited, staying true to the original transcript.\n\n"
-    "Respond ONLY with markdown."
-    "Write the document as speaking to an audience of learners, making it engaging and informative. Use language and words of speaker as much as possible."
-    "Now, format the following transcript:\n"
-)
-    formatted_text = call_gemini_api(format_prompt, transcript_text)
+    formatted_text = call_gemini_api(FORMAT_PROMPT, transcript_text)
     formatted_path = transcript_path.parent / f"formatted_{transcript_path.name}"
     with open(formatted_path, 'w', encoding='utf-8') as f:
         f.write(formatted_text)
     print(f"Formatted notes saved to {formatted_path}")
 
     # 2. Generate a summary
-    summary_prompt = (
-        "Summarize the following transcript into concise, well-structured markdown notes. "
-        "Use markdown formatting: headings for topics, bullet points for key ideas, numbered lists for steps or sequences, and blockquotes for important statements or quotes. "
-        "Highlight main points, action items, and any insights or lessons learned. "
-        "If possible, include a short section at the end with 'Key Takeaways' and 'Action Items'. "
-        "Respond ONLY with markdown. Here is an example format:\n\n"
-        "```markdown\n"
-        "# Session Summary\n"
-        "## Main Topics\n"
-        "- Topic 1: Brief explanation\n"
-        "- Topic 2: Brief explanation\n"
-        "\n## Key Points\n"
-        "- Important point 1\n"
-        "- Important point 2\n"
-        "> \"Notable quote from the session.\"\n"
-        "\n## Key Takeaways\n"
-        "- Takeaway 1\n"
-        "- Takeaway 2\n"
-        "\n## Action Items\n"
-        "1. Action step one\n"
-        "2. Action step two\n"
-        "```\n"
-        "Now, summarize the following transcript:\n"
-    )
-    summary_text = call_gemini_api(summary_prompt, transcript_text)
+    summary_text = call_gemini_api(SUMMARY_PROMPT, transcript_text)
     summary_path = transcript_path.parent / f"summary_{transcript_path.name}"
     with open(summary_path, 'w', encoding='utf-8') as f:
         f.write(summary_text)
